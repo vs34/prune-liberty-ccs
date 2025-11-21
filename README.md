@@ -9,12 +9,12 @@ This project uses OpenSTA as a submodule.
 
 
 **Build using CMake:**
-    ```bash
-    mkdir build
-    cd build
-    cmake ..
-    make
-    ```
+```bash
+mkdir build
+cd build
+cmake ..
+make
+```
 
 The executable `prune` will be created in the `build` directory.
 
