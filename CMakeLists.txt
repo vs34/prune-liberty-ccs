@@ -11,6 +11,7 @@ add_executable(parser
 target_include_directories(parser PRIVATE
     ${PROJECT_SOURCE_DIR}/third_party/OpenSTA/include/sta
     ${PROJECT_SOURCE_DIR}/third_party/OpenSTA/liberty
+    ${PROJECT_BINARY_DIR}/third_party/OpenSTA/power
     ${PROJECT_SOURCE_DIR}/third_party/OpenSTA
     ${PROJECT_SOURCE_DIR}/include
     ${PROJECT_BINARY_DIR}

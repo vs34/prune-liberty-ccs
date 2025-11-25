@@ -31,15 +31,35 @@
 #include "FuncExpr.hh"
 #include "PortDirection.hh"
 #include "Liberty.hh"
+#include "LeakagePower.hh"
+#include "InternalPower.cc"
 #include "TimingRole.hh"
 #include "TimingArc.hh"
 #include "TimingModel.hh"
 #include "TableModel.hh"
 #include "StaState.hh"
 
+
+
 namespace sta {
 
 using std::abs;
+
+// --- START ACCESSOR HACK ---
+class InternalPowerAccessor : public InternalPower {
+public:
+    static InternalPowerModel* getModel(const InternalPower* pwr, const RiseFall* rf) {
+        return ((const InternalPowerAccessor*)pwr)->models_[rf->index()];
+    }
+};
+
+class InternalPowerModelAccessor : public InternalPowerModel {
+public:
+    static TableModel* getTable(const InternalPowerModel* ipm) {
+        return ((const InternalPowerModelAccessor*)ipm)->model_;
+    }
+};
+// --- END ACCESSOR HACK ---
 
 class LibertyWriter
 {
@@ -72,6 +92,8 @@ protected:
                        int index);
   void writeTableAxis10(const TableAxis *axis,
                         int index);
+  void writeInternalPower (InternalPower *pwr, const LibertyPort *port);
+
 
   const char *asString(bool value);
   const char *asString(const PortDirection *dir);
@@ -215,9 +237,29 @@ LibertyWriter::writeTableTemplate(const TableTemplate *tbl_template)
   const TableAxis *axis1 = tbl_template->axis1();
   const TableAxis *axis2 = tbl_template->axis2();
   const TableAxis *axis3 = tbl_template->axis3();
+
   // skip scalar templates
   if (axis1) {
-    fprintf(stream_, "  lu_table_template(%s) {\n", tbl_template->name());
+    // --- NEW LOGIC START ---
+    // Check if we must use the specific 'power_lut_template' keyword.
+    // We decide this based on the variable used in the first axis.
+    bool is_power_template = false;
+    
+    // Get the string name of the variable (e.g., "input_net_transition")
+    const char *var1_str = tableVariableString(axis1->variable());
+    
+    // "input_transition_time" is strictly for power_lut_template
+    if (var1_str && strcmp(var1_str, "input_transition_time") == 0) {
+        is_power_template = true;
+    }
+
+    if (is_power_template) {
+        fprintf(stream_, "  power_lut_template(%s) {\n", tbl_template->name());
+    } else {
+        fprintf(stream_, "  lu_table_template(%s) {\n", tbl_template->name());
+    }
+    // --- NEW LOGIC END ---
+
     fprintf(stream_, "    variable_1 : %s;\n",
             tableVariableString(axis1->variable()));
     if (axis2)
@@ -320,6 +362,18 @@ LibertyWriter::writeCell(const LibertyCell *cell)
         writePort(port);
     }
   }
+  
+  LibertyCell *mutable_cell = const_cast<LibertyCell*>(cell);
+  if (mutable_cell->leakagePowers()) {
+    for (auto *leak : *mutable_cell->leakagePowers()) {
+      fprintf(stream_, "    leakage_power () {\n");
+      fprintf(stream_, "      value : %g;\n", leak->power());
+      if (leak->when()) {
+        fprintf(stream_, "      when : \"%s\";\n", leak->when()->to_string().c_str());
+      }
+      fprintf(stream_, "    }\n");
+    }
+  }
 
   fprintf(stream_, "  }\n");
   fprintf(stream_, "\n");
@@ -392,6 +446,62 @@ LibertyWriter::writePortAttrs(const LibertyPort *port)
     if (!isAutoWidthArc(port, arc_set))
       writeTimingArcSet(arc_set);
   }
+
+
+// MODIFICATION 
+
+  const InternalPowerSeq &int_powers = port->libertyCell()->internalPowers(port);
+  
+  for (auto *pwr : int_powers) {
+      writeInternalPower(pwr, port);
+  }
+
+}
+
+void LibertyWriter::writeInternalPower (InternalPower *pwr, const LibertyPort *port) {
+
+      fprintf(stream_, "      internal_power () {\n");
+      
+      // 1. Related Port/Pin Checks
+      if (pwr->relatedPort() && pwr->relatedPort() != port) {
+          fprintf(stream_, "        related_pin : \"%s\";\n", pwr->relatedPort()->name());
+      }
+      if (pwr->relatedPgPin()) {
+           fprintf(stream_, "        related_pg_pin : \"%s\";\n", pwr->relatedPgPin());
+      }
+      if (pwr->when()) {
+          fprintf(stream_, "        when : \"%s\";\n", pwr->when()->to_string().c_str());
+      }
+
+      // 2. Rise Power Table (Using the Accessor Hack)
+      auto *rise_wrap = InternalPowerAccessor::getModel(pwr, RiseFall::rise());
+      
+      if (rise_wrap) {
+          // Unwrap the inner TableModel using the second Accessor
+          const TableModel *tbl = InternalPowerModelAccessor::getTable(rise_wrap);
+          
+          if (tbl) {
+              fprintf(stream_, "        rise_power(%s) {\n", tbl->tblTemplate()->name());
+              writeTableModel(tbl); 
+              fprintf(stream_, "        }\n");
+          }
+      }
+
+      // 3. Fall Power Table (Using the Accessor Hack)
+      auto *fall_wrap = InternalPowerAccessor::getModel(pwr, RiseFall::fall());
+      
+      if (fall_wrap) {
+          // Unwrap the inner TableModel
+          const TableModel *tbl = InternalPowerModelAccessor::getTable(fall_wrap);
+          
+          if (tbl) {
+              fprintf(stream_, "        fall_power(%s) {\n", tbl->tblTemplate()->name());
+              writeTableModel(tbl); 
+              fprintf(stream_, "        }\n");
+          }
+      }
+      
+      fprintf(stream_, "      }\n");
 }
 
 // Check if arc is added for port min_pulse_width_high/low attribute.
