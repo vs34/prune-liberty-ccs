@@ -40,8 +40,7 @@
 #include "StaState.hh"
 
 
-// TODO 
-// pg_pin
+// TODO  priority
 // input_voltage
 // output_voltage
 // capasitance
@@ -49,7 +48,10 @@
 // DONE
 // power
 // oprating conditions
+// pg_pin
 
+// TODO
+// non defalut oprating conditions
 
 namespace sta {
 
@@ -452,9 +454,27 @@ LibertyWriter::writeBusPort(const LibertyPort *port)
 void
 LibertyWriter::writePort(const LibertyPort *port)
 {
-  fprintf(stream_, "    pin(\"%s\") {\n", port->name());
-  writePortAttrs(port);
-  fprintf(stream_, "    }\n");
+  bool is_power  = port->direction()->isPower();
+  bool is_ground = port->direction()->isGround();
+  if (is_ground || is_power){
+      fprintf(stream_, "    pg_pin(\"%s\") {\n", port->name());
+      if (is_power)
+          fprintf(stream_, "      pg_type : primary_power;\n");
+      else
+          fprintf(stream_, "      pg_type : primary_ground;\n");
+
+      fprintf(stream_, "      voltage_name : \"%s\";\n", port->name());
+
+      if (port->capacitance() > 0.0)
+          fprintf(stream_, "      capacitance : %s;\n", cap_unit_->asString(port->capacitance(), 4));
+
+      fprintf(stream_, "    }\n");
+  }
+  else{
+    fprintf(stream_, "    pin(\"%s\") {\n", port->name());
+    writePortAttrs(port);
+    fprintf(stream_, "    }\n");
+  }
 }
 
 void
