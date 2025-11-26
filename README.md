@@ -1,6 +1,6 @@
 # prune-liberty-ccs
 
-A tool to reduce the size of Liberty (`.lib`) files by pruning unnecessary Composite Current Source (CCS) and power modeling data. It uses the OpenSTA parser and writer for robust handling of the Liberty format.
+A tool to reduce the size of Liberty (`.lib`) files by pruning unnecessary Composite Current Source (CCS).
 
 
 ## Build Instructions
@@ -23,4 +23,4 @@ The executable `prune` will be created in the `build` directory.
 Run the tool by providing an input `.lib` file and an output destination.
 
 ```bash
-./build/prune <input_file.lib> --outfile <output_file.lib>
+./build/prune <input_file.lib> > <output_file.lib>
