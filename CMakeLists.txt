@@ -4,8 +4,8 @@ add_subdirectory(third_party/OpenSTA)
 
 add_executable(parser 
     src/parser.cc
-    src/LibertyWriter.cc
-    src/CcsIgnoreReader.cpp
+    src/Visitor.cpp
+    src/STALibertyParser.cpp
     )
 
 target_include_directories(parser PRIVATE
