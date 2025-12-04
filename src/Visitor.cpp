@@ -37,6 +37,9 @@ void Visitor::parseGroup(LibertyGroup *group){
     // Optimization: Store type in a variable to make code cleaner
     const char* type = group->type();
 
+    if (parse_this_)
+        return;
+
     if (
         // --- CCS Timing (The Main Pruning Targets) ---
         strcmp(type, "output_current_rise") == 0 ||
@@ -87,6 +90,7 @@ void Visitor::end(LibertyGroup *group) {
         return;
     }
     tab_formating -= 2;
+    tab_formating = std::max(tab_formating,0);
     std::string tabs(tab_formating, ' ');
     std::cout << tabs << '}' << std::endl;
 }
