@@ -7,6 +7,13 @@ CMakeCache.txt
 CMakeFiles/
 cmake_install.cmake
 Makefile
-test/uncompress*
-
 .DS_Store
+
+test/results
+test/prune*
+# ngspice turd
+test/b3v3_1check.log
+
+# iverilog turd
+examples/gcd_tb
+
