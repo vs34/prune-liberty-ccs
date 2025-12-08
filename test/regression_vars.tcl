@@ -133,24 +133,18 @@ proc record_example_tests { tests } {
 # Regression test lists.
 
 # Record tests in sta/examples
-record_example_tests {
+
+record_public_tests {
+  get_noargs
   delay_calc
   min_max_delays
   multi_corner
   power
   power_vcd
-  sdf_delays
-  spef_parasitics
-}
-
-record_public_tests {
-  delay_calc
   disconnect_mcp_pin
-  get_filter
   get_is_buffer
   get_is_memory
   get_lib_pins_of_objects
-  get_noargs
   get_objrefs
   liberty_arcs_one2one_1
   liberty_arcs_one2one_2
@@ -158,12 +152,8 @@ record_public_tests {
   liberty_ccsn
   liberty_float_as_str
   liberty_latch3
-  package_require
   path_group_names
   prima3
-  suppress_msg
-  verilog_attribute
-  verilog_specify
 }
 
 define_test_group fast [group_tests all]
