@@ -29,3 +29,19 @@ Run the tool by providing an input `.lib` file and an output destination.
 
 ```bash
 ./build/prune [input_file.lib] > [output_file.lib]
+```
+
+## Testing
+
+```bash
+cd test
+./regression
+````
+
+### Test Workflow
+
+1.  **`prune_ccs`**: Runs `./build/prune` to generate a pruned library from a CCS input.
+2.  **`check_prune`**: Validates that all CCS/SI groups have been removed from the output.
+3.  **OpenSTA Verification**: Runs standard analysis (`delay_calc`, `power`,etc) on the pruned library to ensure NLDM timing and power data remain intact and accurate.
+
+
