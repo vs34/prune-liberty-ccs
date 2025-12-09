@@ -136,6 +136,7 @@ proc record_example_tests { tests } {
 
 record_public_tests {
   prune_ccs
+  check_prune
   get_noargs
   delay_calc
   min_max_delays
