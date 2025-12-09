@@ -1,2 +1,2 @@
 # read ccsn library and ensure no unnecessary warnings
-read_liberty asap7_ccsn.lib.gz
+read_liberty prune_asap7_ccsn.lib

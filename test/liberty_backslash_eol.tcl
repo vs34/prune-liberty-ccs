@@ -1,2 +1,2 @@
 # backslash eol should be ignored in liberty file
-read_liberty liberty_backslash_eol.lib
+read_liberty prune_liberty_backslash_eol.lib

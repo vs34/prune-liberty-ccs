@@ -1,5 +1,5 @@
 # Test one-to-one functionality with mismatched widths where A width (8) is larger than Y width (4)
-read_liberty liberty_arcs_one2one_1.lib
+read_liberty prune_liberty_arcs_one2one_1.lib
 read_verilog liberty_arcs_one2one_1.v
 link_design liberty_arcs_one2one_1
 create_clock -name clk -period 0

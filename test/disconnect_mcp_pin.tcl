@@ -1,5 +1,5 @@
 # disconnect/disconnect pin set_multicycle_path
-read_liberty asap7_small.lib.gz
+read_liberty prune_asap7_small.lib
 read_verilog disconnect_mcp_pin.v
 link_design top
 

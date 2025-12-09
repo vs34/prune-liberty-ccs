@@ -135,12 +135,11 @@ proc record_example_tests { tests } {
 # Record tests in sta/examples
 
 record_public_tests {
+  prune_ccs
   get_noargs
   delay_calc
   min_max_delays
   multi_corner
-  power
-  power_vcd
   disconnect_mcp_pin
   get_is_buffer
   get_is_memory

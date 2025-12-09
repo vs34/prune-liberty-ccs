@@ -10,7 +10,7 @@ Makefile
 .DS_Store
 
 test/results
-test/prune*
+test/prune*.lib
 # ngspice turd
 test/b3v3_1check.log
 

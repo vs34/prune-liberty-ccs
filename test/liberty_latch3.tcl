@@ -1,2 +1,2 @@
 # Read Liberty latch group with data inputs as first parameter
-read_liberty liberty_latch3.lib
+read_liberty prune_liberty_latch3.lib

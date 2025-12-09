@@ -1,7 +1,7 @@
 # Tests whether get_lib_pins -of_objects command works correctly
 
 # Read in design and libraries
-read_liberty asap7_small.lib.gz
+read_liberty prune_asap7_small.lib
 read_verilog reg1_asap7.v
 link_design top
 
