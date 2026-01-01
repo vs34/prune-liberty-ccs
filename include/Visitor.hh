@@ -9,13 +9,13 @@ using namespace sta;
 class Visitor : public LibertyGroupVisitor {
 public:
     Visitor();
-    float parse_this_;
+    float skip_this_;
     LibertyGroup *group_skip_;
     int size_index1;
     int size_index2;
     int tab_formating;
 
-    void parseGroup(LibertyGroup *group);
+    void skipGroup(LibertyGroup *group);
     
     // Override methods from LibertyGroupVisitor
     void begin(LibertyGroup *group) override;

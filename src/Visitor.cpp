@@ -7,8 +7,8 @@ Visitor::Visitor() {
 }
 
 void Visitor::begin(LibertyGroup *group) {
-    parseGroup(group);
-    if (parse_this_)
+    skipGroup(group);
+    if (skip_this_)
         return;
     std::string tabs(tab_formating, ' ');
     std::cout << tabs << group->type();
@@ -33,11 +33,11 @@ void Visitor::begin(LibertyGroup *group) {
     tab_formating += 2;
 }
 
-void Visitor::parseGroup(LibertyGroup *group){
+void Visitor::skipGroup(LibertyGroup *group){
     // Optimization: Store type in a variable to make code cleaner
     const char* type = group->type();
 
-    if (parse_this_)
+    if (skip_this_)
         return;
 
     if (
@@ -77,16 +77,16 @@ void Visitor::parseGroup(LibertyGroup *group){
         strcmp(type, "noise_lut_template") == 0 ||
         strcmp(type, "propagation_lut_template") == 0
     ) {
-        parse_this_ = true;
+        skip_this_ = true;
         group_skip_ = group;
         return;
     }
 }
 
 void Visitor::end(LibertyGroup *group) {
-    if (parse_this_){
+    if (skip_this_){
         if (group_skip_ == group)
-            parse_this_ = false;
+            skip_this_ = false;
         return;
     }
     tab_formating -= 2;
@@ -97,7 +97,7 @@ void Visitor::end(LibertyGroup *group) {
 
 
 void Visitor::visitAttr(LibertyAttr *attr) {
-    if (parse_this_)
+    if (skip_this_)
         return;
 
     std::string tabs(tab_formating, ' ');
