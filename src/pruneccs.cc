@@ -6,7 +6,7 @@ using namespace sta;
 
 int main(int argc, char **argv) {
     if (argc != 2) {
-        std::cout << "Usage: parser <file.lib>\n";
+        std::cout << "Usage: prunecss <file.lib>\n";
         return 1;
     }
 
