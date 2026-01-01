@@ -4,13 +4,13 @@ add_subdirectory(third_party/OpenSTA)
 
 
 
-add_executable(prune
-    src/prune.cc
+add_executable(pruneccs
+    src/pruneccs.cc
     src/Visitor.cpp
     src/STALibertyParser.cpp
     )
 
-target_include_directories(prune PRIVATE
+target_include_directories(pruneccs PRIVATE
     ${PROJECT_SOURCE_DIR}/third_party/OpenSTA/include/sta
     ${PROJECT_SOURCE_DIR}/third_party/OpenSTA/liberty
     ${PROJECT_BINARY_DIR}/third_party/OpenSTA/power
@@ -19,7 +19,7 @@ target_include_directories(prune PRIVATE
     ${PROJECT_BINARY_DIR}
 )
 
-target_link_libraries(prune
+target_link_libraries(pruneccs
     OpenSTA
     sta_swig
 )
