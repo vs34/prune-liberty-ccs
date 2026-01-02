@@ -1,0 +1,73 @@
+name: Build and run tests
+on: [push, pull_request]
+
+jobs:
+  linux-docker:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [centos7, ubuntu22.04]
+    runs-on: [ubuntu-24.04]
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+              wget \
+              cmake \
+              gcc \
+              tcl-dev \
+              tcl-tclreadline \
+              libeigen3-dev \
+              swig \
+              bison \
+              flex \
+              libfl-dev \
+              libdwarf-dev \
+              libdw-dev \
+              libelf-dev \
+              elfutils \
+              automake \
+              autotools-dev
+      - run: |
+          curl -L https://raw.githubusercontent.com/davidkebo/cudd/main/cudd_versions/cudd-3.0.0.tar.gz | tar -xzvC .
+          cd cudd-3.0.0
+          ./configure
+          make -j$(nproc)
+          sudo make install
+      - run: |
+          cmake -S . -B build -D TCL_LIBRARY=$TCL_LIBRARY \
+                              -D TCL_INCLUDE_PATH=$TCL_INCLUDE_PATH \
+                              -D FLEX_INCLUDE_DIR=$FLEX_INCLUDE_DIR
+          cd build
+          make -j$(nproc)
+      - run: |
+          cd test
+          ./regression || (cat results/diffs && exit 1)
+
+  macos:
+    runs-on: [macos-14]
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - run: brew bundle
+      - run: |
+          eval "$(/opt/homebrew/bin/brew shellenv)"
+          export PATH="$(brew --prefix flex)/bin:$PATH"
+          export PATH="$(brew --prefix bison)/bin:$PATH"
+          export TCL_LIBRARY="$(brew --prefix tcl-tk@8)/lib/libtcl8.6.dylib"
+          export TCL_INCLUDE_PATH="$(brew --prefix tcl-tk@8)/include/tcl-tk"
+          export FLEX_INCLUDE_DIR="$(brew --prefix flex)/include"
+          cmake -S . -B build -D TCL_LIBRARY=$TCL_LIBRARY \
+                              -D TCL_INCLUDE_PATH=$TCL_INCLUDE_PATH \
+                              -D FLEX_INCLUDE_DIR=$FLEX_INCLUDE_DIR
+          cd build
+          make -j`sysctl -n hw.ncpu`
+      - run: |
+          cd test
+          ./regression || (cat results/diffs && exit 1)
