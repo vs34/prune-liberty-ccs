@@ -1,5 +1,6 @@
 #include "STALibertyParser.hh"
-#include "LibertyParser.hh" // Required for parseLibertyFile
+
+#include "LibertyParser.hh"
 
 STALibertyParser::STALibertyParser(const std::string &filename)
     : visitor_(new Visitor()),
