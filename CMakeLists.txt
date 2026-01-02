@@ -1,8 +1,10 @@
 cmake_minimum_required(VERSION 3.10)
 
+project(PRUNECCS VERSION 2.7.0
+  LANGUAGES CXX
+)
+
 add_subdirectory(third_party/OpenSTA)
-
-
 
 add_executable(pruneccs
     src/pruneccs.cc
