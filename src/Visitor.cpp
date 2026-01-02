@@ -237,17 +237,6 @@ bool Visitor::needsQuotes(const char* str) {
     return false;
 }
 
-void Visitor::visitVariable(LibertyVariable *variable) {
-    std::cout << "VARIABLE: " << variable->variable()
-              << " = " << variable->value() << std::endl;
-}
-
-void Visitor::visitDefine(LibertyDefine *define) {
-    std::cout << "DEFINE: " << define->name()
-              << " type=" << (int)define->valueType()
-              << std::endl;
-}
-
 bool Visitor::save(LibertyGroup*) { return true; }
 bool Visitor::save(LibertyAttr*) { return true; }
 bool Visitor::save(LibertyVariable*) { return true; }
