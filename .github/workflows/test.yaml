@@ -3,7 +3,7 @@ on: [push, pull_request]
 
 jobs:
   linux:
-    runs-on: [ubuntu-24.04]
+    runs-on: [ubuntu-latest]
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
@@ -39,7 +39,7 @@ jobs:
           cd test && (./regression || (cat results/diffs && exit 1))
 
   macos:
-    runs-on: [macos-14]
+    runs-on: [macos-latest]
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
