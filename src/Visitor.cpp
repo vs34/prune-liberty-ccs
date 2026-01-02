@@ -1,5 +1,7 @@
 #include "Visitor.hh"
+
 #include <string>
+
 Visitor::Visitor() {
     size_index1 = -1;
     size_index2 = -1;
@@ -94,7 +96,6 @@ void Visitor::end(LibertyGroup *group) {
     std::string tabs(tab_formating, ' ');
     std::cout << tabs << '}' << std::endl;
 }
-
 
 void Visitor::visitAttr(LibertyAttr *attr) {
     if (skip_this_)
@@ -234,17 +235,6 @@ bool Visitor::needsQuotes(const char* str) {
         }
     }
     return false;
-}
-
-void Visitor::visitVariable(LibertyVariable *variable) {
-    std::cout << "VARIABLE: " << variable->variable()
-              << " = " << variable->value() << std::endl;
-}
-
-void Visitor::visitDefine(LibertyDefine *define) {
-    std::cout << "DEFINE: " << define->name()
-              << " type=" << (int)define->valueType()
-              << std::endl;
 }
 
 bool Visitor::save(LibertyGroup*) { return true; }
