@@ -2,13 +2,14 @@ name: Build and run tests
 on: [push, pull_request]
 
 jobs:
-  linux-docker:
+  linux:
     runs-on: [ubuntu-24.04]
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+          submodules: true
       - run: |
           sudo apt-get update -y
           sudo apt-get install -y \
@@ -46,6 +47,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+          submodules: true
       - run: |
           cd third_party/opensta && brew bundle install
       - run: |
